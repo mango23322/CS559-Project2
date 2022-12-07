@@ -7,8 +7,7 @@ from sklearn.preprocessing import StandardScaler
 # Sub B -- Decision Tree
 
 # To do:
-#  add more pre-processing
-# 
+# add more pre-processing
 # Sub C -- (non-parametric model)
 # Sub D -- (parametric model)
 # Sub E --(stacking model using lin reg)
