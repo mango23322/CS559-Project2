@@ -2,6 +2,7 @@ import csv
 import numpy as np
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeRegressor
 
 # Sub A -- MLP Regressor
 # Sub B -- Decision Tree
@@ -12,6 +13,8 @@ from sklearn.preprocessing import StandardScaler
 # Sub D -- (parametric model)
 # Sub E --(stacking model using lin reg)
 
+
+################# LOAD TRAIN DATA ###########################
 
 x_raw = []
 y_raw = []
@@ -33,7 +36,7 @@ for line in train_data:
 x_data = np.array(x_raw)
 print('Training data ready')
 
-# Now get the test data
+################# LOAD TEST DATA ###########################
 
 x_testraw = []
 x_testIDs = []
@@ -55,11 +58,13 @@ x_test = np.array(x_testraw)
 print('Test data ready')
 
 
-# Preprocessing
+################# PREPROCESSING ###########################
 sc = StandardScaler()
 x_data = sc.fit_transform(x_data)
 x_test = sc.transform(x_test)
 
+
+################# Sub A -- MLP Regressor ###########################
 
 # This one takes 20 or 30 seconds on my PC
 modelA = MLPRegressor(random_state=1, max_iter=500).fit(x_data, y_raw)
@@ -83,8 +88,7 @@ csv_file.close()
 print('Submission complete!')
 
 
-##### Decision Tree #### 
-from sklearn.tree import DecisionTreeRegressor
+################# Sub B -- Decision Tree ###########################
 
 # Create an instance of the model
 modelB = DecisionTreeRegressor(random_state=0).fit(x_data, y_raw)
