@@ -1,8 +1,10 @@
 import csv
 import numpy as np
+import pandas as pd
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
 
 # Sub A -- MLP Regressor
 # Sub B -- Decision Tree
@@ -66,49 +68,50 @@ x_test = sc.transform(x_test)
 
 ################# Sub A -- MLP Regressor ###########################
 
-# This one takes 20 or 30 seconds on my PC
-modelA = MLPRegressor(random_state=1, max_iter=500).fit(x_data, y_raw)
-print('Model A built')
-predictionA = modelA.predict(x_test)
-# Create a submission out of the list of game IDs and the predictions for them
-resultA = list(zip(x_testIDs, predictionA))
+# # This one takes 20 or 30 seconds on my PC
+# modelA = MLPRegressor(random_state=1, max_iter=500).fit(x_data, y_raw)
+# print('Model A built')
+# predictionA = modelA.predict(x_test)
+# print(predictionA)
+# # Create a submission out of the list of game IDs and the predictions for them
+# resultA = list(zip(x_testIDs, predictionA))
 
 
-# Output a submission
+# # Output a submission
     
-filename = 'Team2_submissionA.csv'
-csv_file = open(filename, "w", newline = '')
-writerA = csv.writer(csv_file)
-writerA.writerow(['game_id', 'rating'])
-for row in resultA:
-    writerA.writerow(row)
+# filename = 'Team2_submissionA.csv'
+# csv_file = open(filename, "w", newline = '')
+# writerA = csv.writer(csv_file)
+# writerA.writerow(['game_id', 'rating'])
+# for row in resultA:
+#     writerA.writerow(row)
 
-csv_file.close()
+# csv_file.close()
 
-print('Submission complete!')
+# print('Submission complete!')
 
 
-################# Sub B -- Decision Tree ###########################
+# ################# Sub B -- Decision Tree ###########################
 
-# Create an instance of the model
-modelB = DecisionTreeRegressor(random_state=0).fit(x_data, y_raw)
-print('Model B built')
-predictionB = modelB.predict(x_test)
-# Create a submission
-resultB = list(zip(x_testIDs, predictionB))
+# # Create an instance of the model
+# modelB = DecisionTreeRegressor(random_state=0).fit(x_data, y_raw)
+# print('Model B built')
+# predictionB = modelB.predict(x_test)
+# # Create a submission
+# resultB = list(zip(x_testIDs, predictionB))
 
-# Output a submission
+# # Output a submission
     
-filename = 'Team2_submissionB.csv'
-csv_file = open(filename, "w", newline = '')
-writerB = csv.writer(csv_file)
-writerB.writerow(['game_id', 'rating'])
-for row in resultB:
-    writerB.writerow(row)
+# filename = 'Team2_submissionB.csv'
+# csv_file = open(filename, "w", newline = '')
+# writerB = csv.writer(csv_file)
+# writerB.writerow(['game_id', 'rating'])
+# for row in resultB:
+#     writerB.writerow(row)
 
-csv_file.close()
+# csv_file.close()
 
-print('Submission complete!')
+# print('Submission complete!')
 
 
 ################# Sub C -- (non-parametric model) ###########################
@@ -120,9 +123,24 @@ print('Submission complete!')
 
 ################# Sub D -- (parametric model)  ###########################
 ## Kevin
+#lin reg
+X_train = x_data
+y_train = np.array(y_raw)
 
+regr = LinearRegression()
+regr.fit(X_train, y_train)
+y_pred = regr.predict(x_test)
 
+#  Create a submission
+resultD = list(zip(x_testIDs, y_pred))
 
+# Output a submission
+df = pd.DataFrame(resultD)
+df.columns = ["game_id","rating"]
+filename = 'Team2_submissionD.csv'
+df.to_csv(filename, index=False)
+
+print('Submission complete!')
 
 ################# Sub E --(stacking model using lin reg)  ###########################
 ## Jason
