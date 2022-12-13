@@ -128,8 +128,9 @@ def my_MLPRegressor():
     modelA = MLPRegressor(random_state=1, max_iter=500).fit(x_data, y_raw)
     print('Model A built')
     predictionA = modelA.predict(x_test)
-    rmse_train_mlp=mean_squared_error(y_bot_train, predictionA,squared=False)
-    print("RMSE of MLPRegressor:",rmse_train_mlp)
+    # rmse_train_mlp=mean_squared_error(y_raw, predictionA,squared=False)
+    # print("RMSE of MLPRegressor:",rmse_train_mlp)
+    
     # Create a submission out of the list of game IDs and the predictions for them
     resultA = list(zip(x_testIDs, predictionA))
 
@@ -143,8 +144,6 @@ def my_MLPRegressor():
     csv_file.close()
     print('Submission complete!')
 
-#my_MLPRegressor()
-
 # ################# Sub B -- Decision Tree ###########################
 
 # Non-parametric model
@@ -153,8 +152,8 @@ def my_DecisionTreeRegressor():
     modelB = DecisionTreeRegressor(random_state=0).fit(x_data, y_raw)
     print('Model B built')
     predictionB = modelB.predict(x_test)
-    rmse_train_dt=mean_squared_error(y_bot_train, predictionB,squared=False)
-    print("RMSE of Decision tree is:",rmse_train_dt)
+    # rmse_train_dt=mean_squared_error(y_raw, predictionB,squared=False)
+    # print("RMSE of Decision tree is:",rmse_train_dt)
 
     # Create a submission
     resultB = list(zip(x_testIDs, predictionB))
@@ -168,8 +167,6 @@ def my_DecisionTreeRegressor():
         writerB.writerow(row)
     csv_file.close()
     print('Submission complete!')
-
-#my_DecisionTreeRegressor()
 
 ################# Sub C -- (non-parametric model) ###########################
 ## Anjali
@@ -198,7 +195,6 @@ def my_KNN():
 
     print('Submission complete!')
 
-# my_KNN()
 ################# Sub D -- (parametric model)  ###########################
 ## Kevin
 
@@ -223,7 +219,15 @@ def my_LinearRegression():
 
     print('Submission complete!')
 
-#my_LinearRegression()
 
 ################# Sub E --(stacking model using lin reg)  ###########################
 ## Jason
+
+
+
+######### Main ##########
+
+my_MLPRegressor()
+my_DecisionTreeRegressor()
+my_KNN()
+my_LinearRegression()
