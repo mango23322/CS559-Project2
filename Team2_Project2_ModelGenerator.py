@@ -123,7 +123,7 @@ x_bot_train = new_merged.drop('rating',axis=1)
 ################# Sub A -- MLP Regressor ###########################
 
 # Parametric model
-def my_MLPRegressor():
+def my_MLPRegressor(x_data, x_test, x_testIDs, y_raw):
     # This one takes 20 or 30 seconds on my PC
     modelA = MLPRegressor(random_state=1, max_iter=500).fit(x_data, y_raw)
     print('Model A built')
@@ -144,10 +144,12 @@ def my_MLPRegressor():
     csv_file.close()
     print('Submission complete!')
 
+    return modelA
+
 # ################# Sub B -- Decision Tree ###########################
 
 # Non-parametric model
-def my_DecisionTreeRegressor():
+def my_DecisionTreeRegressor(x_data, x_test, x_testIDs, y_raw):
     # Create an instance of the model
     modelB = DecisionTreeRegressor(random_state=0).fit(x_data, y_raw)
     print('Model B built')
@@ -168,10 +170,12 @@ def my_DecisionTreeRegressor():
     csv_file.close()
     print('Submission complete!')
 
+    return modelB
+
 ################# Sub C -- (non-parametric model) ###########################
 ## Anjali
 
-def my_KNN():
+def my_KNN(x_bot_train, x_testIDs, y_bot_train):
     modelC = KNeighborsClassifier(n_neighbors=3)
 
     # Train the model using the training sets
@@ -195,11 +199,13 @@ def my_KNN():
 
     print('Submission complete!')
 
+    return modelC
+
 ################# Sub D -- (parametric model)  ###########################
 ## Kevin
 
 # Parametric
-def my_LinearRegression():
+def my_LinearRegression(x_data, x_test, x_testIDs, y_raw):
     #lin reg
     X_train = x_data
     y_train = np.array(y_raw)
@@ -219,15 +225,30 @@ def my_LinearRegression():
 
     print('Submission complete!')
 
+    return regr
+
+######### Main ##########
+
+model_A = my_MLPRegressor(x_data, x_test, x_testIDs, y_raw)
+model_B = my_DecisionTreeRegressor(x_data, x_test, x_testIDs, y_raw)
+model_C = my_KNN(x_bot_train, x_testIDs, y_bot_train)
+model_D = my_LinearRegression(x_data, x_test, x_testIDs, y_raw)
 
 ################# Sub E --(stacking model using lin reg)  ###########################
 ## Jason
 
+def get_stacking():
+    # define the base model
+    level0 = list()
+    level0.append(('NeuralNetwork', model_A))
+    level0.apend(('NeuralNetwork', model_A))
+    pass
 
-
-######### Main ##########
-
-my_MLPRegressor()
-my_DecisionTreeRegressor()
-my_KNN()
-my_LinearRegression()
+def get_models(model_A, model_B, model_C, model_D):
+    models = dict()
+    models['NeuralNetwork'] = model_A
+    models['decisiontree'] = model_B
+    models['KNN'] = model_C
+    models['LinearRegression'] = model_D
+    models['stacking'] = get_stacking(model_A, model_B, model_C, model_D)
+    return models
