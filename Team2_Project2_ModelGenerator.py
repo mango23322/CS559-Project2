@@ -1,14 +1,13 @@
 import csv
 import numpy as np
 import pandas as pd
-from sklearn.neural_network import MLPRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.linear_model import LinearRegression
 from sklearn import preprocessing
-from sklearn.preprocessing import LabelEncoder
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.tree import DecisionTreeRegressor
 
 # Sub A -- MLP Regressor
 # Sub B -- Decision Tree
@@ -237,18 +236,41 @@ model_D = my_LinearRegression(x_data, x_test, x_testIDs, y_raw)
 ################# Sub E --(stacking model using lin reg)  ###########################
 ## Jason
 
-def get_stacking():
+def get_stacking(model_A, model_B, model_C, model_D):
     # define the base model
     level0 = list()
     level0.append(('NeuralNetwork', model_A))
-    level0.apend(('NeuralNetwork', model_A))
-    pass
+    level0.append(('DecisionTree', model_B))
+    level0.append(('KNN', model_C))
+    level0.append(('LinearRegression', model_D))
+    # define meta learner model
+    level1 = LinearRegression()
+    # define the stacking ensemble
+    model = StackingRegressor(estimators=level0, final_estimator=level1, cv=5)
+    return model
 
 def get_models(model_A, model_B, model_C, model_D):
     models = dict()
     models['NeuralNetwork'] = model_A
-    models['decisiontree'] = model_B
+    models['DecisionTree'] = model_B
     models['KNN'] = model_C
     models['LinearRegression'] = model_D
     models['stacking'] = get_stacking(model_A, model_B, model_C, model_D)
     return models
+
+def stacking_model(model_A, model_B, model_C, model_D, x_testIDs, x_test):
+    model_stacking = get_stacking(model_A, model_B, model_C, model_D)
+    y_pred = model_stacking.predict(x_test)
+
+    #  Create a submission
+    resultE = list(zip(x_testIDs, y_pred))
+
+    # Output a submission
+    df = pd.DataFrame(resultE)
+    df.columns = ["game_id","rating"]
+    filename = 'Team2_submissionE.csv'
+    df.to_csv(filename, index=False)
+
+    print('Submission complete!')
+
+stacking_model(model_A, model_B, model_C, model_D)
