@@ -2,9 +2,10 @@ import csv
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+from sklearn.ensemble import StackingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.tree import DecisionTreeRegressor
@@ -175,7 +176,7 @@ def my_DecisionTreeRegressor(x_data, x_test, x_testIDs, y_raw):
 ## Anjali
 
 def my_KNN(x_bot_train, x_testIDs, y_bot_train):
-    modelC = KNeighborsClassifier(n_neighbors=3)
+    modelC = KNeighborsRegressor(n_neighbors=3)
 
     # Train the model using the training sets
     modelC.fit(x_bot_train,y_bot_train)
@@ -210,6 +211,7 @@ def my_LinearRegression(x_data, x_test, x_testIDs, y_raw):
     y_train = np.array(y_raw)
 
     regr = LinearRegression()
+    print('Model D built')
     regr.fit(X_train, y_train)
     y_pred = regr.predict(x_test)
 
@@ -236,7 +238,7 @@ model_D = my_LinearRegression(x_data, x_test, x_testIDs, y_raw)
 ################# Sub E --(stacking model using lin reg)  ###########################
 ## Jason
 
-def get_stacking(model_A, model_B, model_C, model_D):
+def stacking_model(model_A, model_B, model_C, model_D, x_data, x_test, x_testIDs, y_raw):
     # define the base model
     level0 = list()
     level0.append(('NeuralNetwork', model_A))
@@ -246,21 +248,12 @@ def get_stacking(model_A, model_B, model_C, model_D):
     # define meta learner model
     level1 = LinearRegression()
     # define the stacking ensemble
-    model = StackingRegressor(estimators=level0, final_estimator=level1, cv=5)
-    return model
-
-def get_models(model_A, model_B, model_C, model_D):
-    models = dict()
-    models['NeuralNetwork'] = model_A
-    models['DecisionTree'] = model_B
-    models['KNN'] = model_C
-    models['LinearRegression'] = model_D
-    models['stacking'] = get_stacking(model_A, model_B, model_C, model_D)
-    return models
-
-def stacking_model(model_A, model_B, model_C, model_D, x_testIDs, x_test):
-    model_stacking = get_stacking(model_A, model_B, model_C, model_D)
-    y_pred = model_stacking.predict(x_test)
+    model_E = StackingRegressor(estimators=level0, final_estimator=level1, cv=5)
+    print('Model E built')
+    # fit the model on all available data
+    model_E.fit(x_data, y_raw)
+    # make a prediction for one example
+    y_pred = model_E.predict(x_test)
 
     #  Create a submission
     resultE = list(zip(x_testIDs, y_pred))
@@ -273,4 +266,4 @@ def stacking_model(model_A, model_B, model_C, model_D, x_testIDs, x_test):
 
     print('Submission complete!')
 
-stacking_model(model_A, model_B, model_C, model_D)
+stacking_model(model_A, model_B, model_C, model_D, x_data, x_test, x_testIDs, y_raw)
