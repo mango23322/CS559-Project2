@@ -9,6 +9,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.neighbors import KNeighborsRegressor
 
 # Sub A -- MLP Regressor
 # Sub B -- Decision Tree
@@ -179,14 +180,14 @@ def my_KNN(x_bot_train, x_testIDs, y_bot_train):
     modelC = KNeighborsRegressor(n_neighbors=3)
 
     # Train the model using the training sets
-    modelC.fit(x_bot_train,y_bot_train)
-    print('Model C built')
-    predictionC = modelC.predict(x_bot_train)
-    print(predictionC)
+    modelC = KNeighborsRegressor(n_neighbors=8)
+    modelC.fit(x_data,y_raw)
+    print('Model c created')
+    predictionC = modelC.predict(x_test)
     # Create a submission
     #resultC = list(zip(x_testIDs, predictionC))
-    rmse_train_knn=mean_squared_error(y_bot_train, predictionC,squared=False)
-    print("RMSE of Decision tree is:",rmse_train_knn)
+    # rmse_train_knn=mean_squared_error(y_bot_train, predictionC,squared=False)
+    # print("RMSE of Decision tree is:",rmse_train_knn)
 
     #  Create a submission
     resultC = list(zip(x_testIDs, predictionC))
@@ -228,13 +229,6 @@ def my_LinearRegression(x_data, x_test, x_testIDs, y_raw):
 
     return regr
 
-######### Main ##########
-
-model_A = my_MLPRegressor(x_data, x_test, x_testIDs, y_raw)
-model_B = my_DecisionTreeRegressor(x_data, x_test, x_testIDs, y_raw)
-model_C = my_KNN(x_bot_train, x_testIDs, y_bot_train)
-model_D = my_LinearRegression(x_data, x_test, x_testIDs, y_raw)
-
 ################# Sub E --(stacking model using lin reg)  ###########################
 ## Jason
 
@@ -265,5 +259,12 @@ def stacking_model(model_A, model_B, model_C, model_D, x_data, x_test, x_testIDs
     df.to_csv(filename, index=False)
 
     print('Submission complete!')
+
+######### Main ##########
+
+model_A = my_MLPRegressor(x_data, x_test, x_testIDs, y_raw)
+model_B = my_DecisionTreeRegressor(x_data, x_test, x_testIDs, y_raw)
+model_C = my_KNN(x_bot_train, x_testIDs, y_bot_train)
+model_D = my_LinearRegression(x_data, x_test, x_testIDs, y_raw)
 
 stacking_model(model_A, model_B, model_C, model_D, x_data, x_test, x_testIDs, y_raw)
